@@ -1,34 +1,42 @@
-import videofile from "../Models/videofile.js";
-export const uploadvideo=async(req,res)=>{
-    if(req.file=== undefined){
-        res.status(404).json({message:"plz upload a mp.4 video file only"})
-    }else{
-        try {
-            const file=new videofile({
-                videotitle:req.body.title,
-                filename:req.file.originalname,
-                filepath:req.file.path,
-                filetype:req.file.mimetype,
-                filesize:req.file.size,
-                videochanel:req.body.chanel,
-                uploader:req.body.uploader,
-            })
-            // console.log(file)
-            await file.save()
-            res.status(200).send("File uploaded successfully")
-        } catch (error) {
-            res.status(404).json(error.message)
-            return
-        }
-    }
-}
+import Video from "../Models/videofile.js";
 
-export const getallvideos=async(req,res)=>{
-    try {
-        const files=await videofile.find();
-        res.status(200).send(files)
-    } catch (error) {
-        res.status(404).json(error.message)
-            return
+// Upload a video
+export const uploadvideo = async (req, res) => {
+  try {
+    const { videotitle, videochanel, videodesc } = req.body;
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ mess: "No file uploaded" });
     }
-}
+
+    if (file.mimetype !== "video/mp4") {
+      return res.status(400).json({ mess: "Please upload a .mp4 video file only" });
+    }
+
+    const newVideo = new Video({
+      videotitle,
+      videochanel,
+      videodesc,
+      videourl: `/uploads/${file.filename}`,
+      viewer: req.userid,
+    });
+
+    await newVideo.save();
+    res.status(200).json({ mess: "Video uploaded successfully", video: newVideo });
+  } catch (error) {
+    console.error("Upload Video Error:", error.message);
+    res.status(500).json({ mess: "Something went wrong..." });
+  }
+};
+
+// Get all videos
+export const getallvideos = async (req, res) => {
+  try {
+    const videos = await Video.find().sort({ createdAt: -1 });
+    res.status(200).json(videos);
+  } catch (error) {
+    console.error("Get All Videos Error:", error.message);
+    res.status(500).json({ mess: "Failed to fetch videos" });
+  }
+};

@@ -1,4 +1,4 @@
-const likedvideoreducer=(state={data:null},action)=>{
+const likedvideoreducer=(state={data: []},action)=>{
     switch (action.type) {
         case "POST_LIKEDVIDEO":
             return{...state,data:action?.data}

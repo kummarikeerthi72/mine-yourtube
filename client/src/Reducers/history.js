@@ -1,4 +1,4 @@
-const historyreducer = (state = { data: null }, action) => {
+const historyreducer = (state = { data:  [] }, action) => {
     switch (action.type) {
         case 'POST_HISTORY':
             return { ...state, data: action?.data }

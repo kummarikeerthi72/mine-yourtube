@@ -1,4 +1,4 @@
-const watchlaterreducer=(state={data:null},action)=>{
+const watchlaterreducer=(state={data: []},action)=>{
     switch (action.type) {
         case "POST_WATCHLATER":
             return{...state,data:action?.data}

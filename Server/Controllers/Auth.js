@@ -1,36 +1,46 @@
-import users from "../Models/Auth.js"
-import jwt from "jsonwebtoken"
-export const login = async (req, res) => {
-    const { email } = req.body;
-    // console.log(email)
-    try {
-        const extinguser = await users.findOne({ email })
-        if (!extinguser) {
-            try {
-                const newuser = await users.create({ email });
-                const token = jwt.sign({
-                    email: newuser.email, id: newuser._id
-                }, process.env.JWT_SECERT, {
-                    expiresIn: "1h"
-                }
-                )
-                res.status(200).json({ result: newuser, token })
-            } catch (error) {
-                res.status(500).json({ mess: "something went wrong..." })
-                return
-            }
+import users from "../Models/Auth.js";
+import jwt from "jsonwebtoken";
 
-        } else {
-            const token = jwt.sign({
-                email: extinguser.email, id: extinguser._id
-            }, process.env.JWT_SECERT, {
-                expiresIn: "1h"
-            }
-            )
-            res.status(200).json({ result: extinguser ,token})
-        }
-    } catch (error) {
-        res.status(500).json({ mess: "something went wrong..." })
-        return
+export const login = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const existingUser = await users.findOne({ email });
+
+    if (!existingUser) {
+      try {
+        const newUser = await users.create({ email });
+
+        const token = jwt.sign(
+          {
+            email: newUser.email,
+            id: newUser._id,
+          },
+          process.env.JWT_SECRET, // ✅ make sure spelling is correct here
+          { expiresIn: "1h" }
+        );
+
+        res.status(200).json({ result: newUser, token });
+      } catch (error) {
+        console.log("❌ Error creating new user:", error);
+        res.status(500).json({ message: error.message || "Something went wrong..." });
+        return;
+      }
+    } else {
+      // ✅ FIXED: use existingUser instead of newUser
+      const token = jwt.sign(
+        {
+          email: existingUser.email,
+          id: existingUser._id,
+        },
+        process.env.JWT_SECRET, // ✅ make sure this is correct
+        { expiresIn: "1h" }
+      );
+
+      res.status(200).json({ result: existingUser, token });
     }
-}
+  } catch (error) {
+    console.log("❌ Login error:", error);
+    res.status(500).json({ message: error.message || "Something went wrong..." });
+  }
+};
