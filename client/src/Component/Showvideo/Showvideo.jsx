@@ -8,7 +8,7 @@ const Showvideo = ({ vid }) => {
   const channelName = vid?.channelname || 'Keerthi';
 
   // Correct video URL using deployed backend
-  const videoURL = `https://mine-yourtube.onrender.com/${vid.filepath?.startsWith('/') ? vid.filepath.slice(1) : vid.filepath}`;
+  const videoURL = `https://mine-yourtube.onrender.com/uploads/${vid.filepath?.startsWith('/') ? vid.filepath.slice(1) : vid.filepath}`;
 
   return (
     <>
