@@ -18,12 +18,13 @@ import {
 // ✅ Get All Videos
 export const getallvideo = () => async (dispatch) => {
   try {
-    const { data } = await getvideos();
-    dispatch({ type: GET_ALL_VIDEOS, payload: data });
+    const res = await axios.get('https://mine-yourtube.onrender.com/api/video/get');
+    dispatch({ type: GET_ALL_VIDEOS, payload: res.data }); // ✅ Corrected
   } catch (error) {
-    console.error("Get All Videos Error:", error.message);
+    console.error('Error fetching videos:', error);
   }
 };
+
 
 // ✅ Get Single Video by ID
 export const getSingleVideo = (id) => async (dispatch) => {
