@@ -1,56 +1,24 @@
-import comment from "../Models/comment.js";
-import mongoose from "mongoose";
+import Comments from "../Models/comment.js"; // ensure model filename is comment.js
 
 export const postcomment = async (req, res) => {
-    const commentdata = req.body
-    const postcomment = new comment(commentdata)
-    try {
-        await postcomment.save()
-        res.status(200).json("posted the comment")
-    } catch (error) {
-        res.status(400).json(error.message)
-        return
-    }
-}
+  try {
+    const { videoid, commentbody, usercommented, userId } = req.body;
 
-export const getcomment = async (req, res) => {
-    try {
-        const commentlist = await comment.find()
-        res.status(200).send(commentlist)
-    } catch (error) {
-        res.status(400).json(error.message)
-        return
+    if (!commentbody || !videoid || !usercommented || !userId) {
+      return res.status(400).json({ message: 'All fields are required' });
     }
-}
 
-export const deletecomment = async (req, res) => {
-    const { id: _id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(_id)) {
-        return res.status(400).send("Comments unavailable..")
-    }
-    try {
-        await comment.findByIdAndDelete(_id);
-        res.status(200).json({ message: "deleted comment" })
-    } catch (error) {
-        res.status(400).json(error.message)
-        return
-    }
-}
+    const newComment = new Comments({
+      videoid,
+      commentbody,
+      usercommented,
+      userId,
+    });
 
-export const editcomment = async (req, res) => {
-    const { id: _id } = req.params;
-    const { commentbody } = req.body;
-    if (!mongoose.Types.ObjectId.isValid(_id)) {
-        return res.status(400).send("Comments unavailable..")
-    }
-    try {
-        const updatecomment = await comment.findByIdAndUpdate(
-            _id,
-            { $set: { "commentbody": commentbody } }
-        )
-        res.status(200).json(updatecomment)
-    } catch (error) {
-        res.status(400).json(error.message)
-        return
-    }
-}
+    await newComment.save();
+    res.status(201).json({ message: 'Comment posted successfully', newComment });
+  } catch (error) {
+    console.error("Error in postcomment controller:", error.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+};

@@ -1,7 +1,20 @@
-import mongoose from "mongoose"
-const watchalatervideoschema=mongoose.Schema({
-    videoid:{type:String,require:true},
-    viewer:{type:String,require:true},
-    likedon:{type:Date,default:Date.now()}
-})
-export default mongoose.model("Watchlater",watchalatervideoschema)
+import mongoose from "mongoose";
+
+const watchLaterSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  videoId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "VideoFile",
+    required: true,
+  },
+  addedOn: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+export default mongoose.model("WatchLater", watchLaterSchema);

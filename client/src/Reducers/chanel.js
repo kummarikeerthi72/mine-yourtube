@@ -1,13 +1,11 @@
-
-
-const chanelreducer=(states=[],action)=>{
-    switch (action.type) {
-        case "UPDATE_DATA":
-            return states.map(state=>state._id === action.payload._id? action.payload:state)
-        case "FETCH_CHANELS":
-            return action.payload
-        default:
-            return states
-    }
-}
-export default chanelreducer
+const chanelreducer = (state = [], action) => {
+  switch (action.type) {
+    case "FETCH_GROUPS":
+      return action.payload;
+    case "CREATE_GROUP":
+      return [...state, action.payload];
+    default:
+      return state;
+  }
+};
+export default chanelreducer;

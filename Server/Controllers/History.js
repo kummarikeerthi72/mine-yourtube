@@ -1,36 +1,31 @@
 import history from "../Models/history.js";
 
-export const historycontroller=async(req,res)=>{
-    const historydata=req.body;
-    const addtohistory=new history(historydata)
-    try {
-        await addtohistory.save()
-        res.status(200).json("added to history")
-    } catch (error) {
-        res.status(400).json(error.message)
-        return
-    }
-}
+export const addhistory = async (req, res) => {
+  try {
+    const { videoId } = req.body;
+    const userId = req.userId;
 
-export const getallhistorycontroller=async(req,res)=>{
-    try {
-        const files=await history.find();
-        res.status(200).send(files)
-    } catch (error) {
-        res.status(400).json(error.message)
-        return
+    const existing = await history.findOne({ userId, videoId });
+    if (!existing) {
+      const newEntry = new history({ userId, videoId });
+      await newEntry.save();
     }
-}
 
-export const deletehistory =async(req,res)=>{
-    const{userid:userid}=req.params;
-    try {
-        await history.deleteMany({
-            viewer:userid
-        })
-        res.status(200).json({message:"removed from history"})
-    } catch (error) {
-        res.status(400).json(error.message)
-        return
-    }
-}
+    res.status(200).json({ message: "History updated" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const gethistoryvideos = async (req, res) => {
+  // your logic here
+
+
+  try {
+    const userId = req.userId;
+    const videos = await history.find({ userId }).populate("videoId");
+    res.status(200).json(videos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

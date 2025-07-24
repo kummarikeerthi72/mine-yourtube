@@ -1,35 +1,18 @@
-import likedvideo from "../Models/likevideo.js"
+import Likedvideo from "../Models/likevideo.js";
+import Videofile from "../Models/videofile.js";
 
-export const likedvideocontroller = async (req, res) => {
-    const likedvidedata = req.body;
-    const likedvideosave = new likedvideo(likedvidedata)
-    try {
-        await likedvideosave.save()
-        res.status(200).json("added to likedvideo")
-    } catch (error) {
-        res.status(400).json(error.message)
-        return
-    }
-}
-export const getalllikedvideo= async (req, res) => {
-    try {
-        const files = await likedvideo.find()
-        res.status(200).send(files)
-    } catch (error) {
-        res.status(400).json(error.message)
-        return
-    }
-}
-export const deletelikedvideo = async (req, res) => {
-    const { videoid: videoid, viewer: viewer } = req.params;
-    try {
-        await likedvideo.findOneAndDelete({
-            videoid:videoid,viewer:viewer,
-        })
-        res.status(200).json({message:"removed from liked video"})
-    } catch (error) {
-        res.status(400).json(error.message)
-        return
-    }
+export const getalllikedvideo = async (req, res) => {
+  try {
+    const liked = await Likedvideo.find();
 
-}
+    const videoPromises = liked.map(async (item) => {
+      const video = await Videofile.findById(item.videoid);
+      return video;
+    });
+
+    const videos = await Promise.all(videoPromises);
+    res.status(200).json(videos.filter(v => v !== null));
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching liked videos", error: error.message });
+  }
+};

@@ -1,3 +1,4 @@
+// src/Pages/Home/Home.jsx
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getallvideo } from '../../action/video';
@@ -8,15 +9,11 @@ import './Home.css';
 const Home = () => {
   const dispatch = useDispatch();
 
-  // ⬇️ fetch videos on first load
   useEffect(() => {
     dispatch(getallvideo());
   }, [dispatch]);
 
-  // ⬇️ get videos from Redux
-  const vids = useSelector((state) =>
-    state.videoreducer?.data?.filter((v) => v).reverse()
-  );
+  const vids = useSelector((state) => state.videoreducer?.data || []);
 
   const navlist = [
     "All", "Python", "Java", "C++", "Movies", "Science", "Animation", "Gaming", "Comedy"

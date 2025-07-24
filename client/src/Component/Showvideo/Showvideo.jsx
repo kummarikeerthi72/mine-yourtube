@@ -4,37 +4,37 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 
 const Showvideo = ({ vid }) => {
-  const getVideoUrl = (filepath) => {
-    if (!filepath) return '';
-    return `http://localhost:5000/${filepath.startsWith('/') ? filepath.slice(1) : filepath}`;
-  };
+  const title = vid?.videotitle || vid?.title || 'Untitled Video';
+  const channelName = vid?.channelname || 'Keerthi';
 
   return (
-    <div className="video_card_container">
+    <>
       <Link to={`/videopage/${vid._id}`}>
         <video
-          src={getVideoUrl(vid.filepath)}
-          className="video_ShowVideo"
-          muted
-          loop
-          playsInline
+          src={`http://localhost:5000/${vid.filepath}`}
+          className='video_ShowVideo'
+          preload="metadata"
         />
       </Link>
+
       <div className="video_description">
         <div className="Chanel_logo_App">
           <div className="fstChar_logo_App">
-            {vid?.uploader?.charAt(0)?.toUpperCase() || 'U'}
+            {channelName.charAt(0).toUpperCase()}
           </div>
         </div>
+
         <div className="video_details">
-          <p className="title_vid_ShowVideo">{vid?.title || 'Untitled Video'}</p>
-          <pre className="vid_views_UploadTime">{vid?.uploader || 'Unknown Uploader'}</pre>
+          <p className="title_vid_ShowVideo">
+            {title.trim()}
+          </p>
+          <pre className="vid_views_UploadTime">{channelName}</pre>
           <pre className="vid_views_UploadTime">
-            {vid?.views || 0} views <span className="dot">•</span> {moment(vid?.createdat).fromNow()}
+            {vid?.views || 0} views <div className="dot"></div> {moment(vid?.createdat).fromNow()}
           </pre>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

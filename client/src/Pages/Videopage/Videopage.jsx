@@ -1,41 +1,46 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import './Videopage.css';
 import moment from 'moment';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Likewatchlatersavebtns from './Likewatchlatersavebtns';
 import Comment from '../../Component/Comment/Comment';
-import { viewvideo } from '../../action/video';
+
 import { addtohistory } from '../../action/history';
+import { viewvideoAction } from '../../action/video';
 
 const Videopage = () => {
   const { vid } = useParams();
+  const location = useLocation(); // force rerender on navigation
   const dispatch = useDispatch();
 
   const vids = useSelector((state) => state.videoreducer?.data || []);
   const currentuser = useSelector((state) => state.currentuserreducer);
 
-  const vv = vids.find((q) => String(q._id) === String(vid));
+  const vv = useMemo(() => {
+    return vids.find((video) => String(video._id) === String(vid));
+  }, [vids, vid]);
+
+  useEffect(() => {
+  if (vid) {
+    dispatch(viewvideoAction(vid));
+    if (currentuser?.result?._id) {
+      dispatch(
+        addtohistory({
+          videoid: vid,
+          userid: currentuser.result._id,
+        })
+      );
+    }
+  }
+}, [dispatch, vid, location.pathname, currentuser?.result?._id]);
+ // 🔁 triggered even when same video link is revisited
 
   const getVideoUrl = (filepath) => {
     if (!filepath) return '';
     return `http://localhost:5000/${filepath.startsWith('/') ? filepath.slice(1) : filepath}`;
   };
-
-  useEffect(() => {
-    if (vid) {
-      dispatch(viewvideo({ id: vid }));
-      if (currentuser) {
-        dispatch(
-          addtohistory({
-            videoid: vid,
-            viewer: currentuser?.result?._id,
-          })
-        );
-      }
-    }
-  }, [vid, currentuser, dispatch]);
 
   if (!vv) return <p>Loading video or video not found...</p>;
 
@@ -44,16 +49,18 @@ const Videopage = () => {
       <div className="container2_videoPage">
         <div className="video_display_screen_videoPage">
           <video
-            src={getVideoUrl(vv.filepath)}
-            className="video_ShowVideo_videoPage"
-            controls
-          />
+  src={getVideoUrl(vv.filepath)}
+  className="video_ShowVideo_videoPage"
+  controls
+  onPlay={() => dispatch(viewvideoAction(vid))}
+/>
+
           <div className="video_details_videoPage">
             <div className="video_btns_title_VideoPage_cont">
-              <p className="video_title_VideoPage">{vv.title}</p>
+              <p className="video_title_VideoPage">{vv.title || 'Untitled Video'}</p>
               <div className="views_date_btns_VideoPage">
                 <div className="views_videoPage">
-                  {vv.views} views <div className="dot"></div> {moment(vv.createdat).fromNow()}
+                  {vv.views || 0} views <div className="dot"></div> {moment(vv.createdat).fromNow()}
                 </div>
                 <Likewatchlatersavebtns vv={vv} vid={vid} />
               </div>

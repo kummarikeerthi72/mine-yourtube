@@ -1,35 +1,37 @@
-import watchlater from "../Models/watchlater.js";
+import Watchlater from "../Models/watchlater.js";
 
 export const watchlatercontroller = async (req, res) => {
-    const watchlaterdata = req.body;
-    const addtowatchlater = new watchlater(watchlaterdata)
-    try {
-        await addtowatchlater.save()
-        res.status(200).json("added to watchlater")
-    } catch (error) {
-        res.status(400).json(error.message)
-        return
-    }
-}
-export const getallwatchlatervontroller = async (req, res) => {
-    try {
-        const files = await watchlater.find()
-        res.status(200).send(files)
-    } catch (error) {
-        res.status(400).json(error.message)
-        return
-    }
-}
-export const deletewatchlater = async (req, res) => {
-    const { videoid: videoid, viewer: viewer } = req.params
-    try {
-        await watchlater.findOneAndDelete({
-            videoid:videoid,viewer:viewer,
-        })
-        res.status(200).json({message:"removed from watch later"})
-    } catch (error) {
-        res.status(400).json(error.message)
-        return
+  try {
+    const { videoid, viewer } = req.body;
+
+    const exists = await Watchlater.findOne({ videoid, viewer });
+    if (exists) {
+      return res.status(400).json({ message: "Already in watch later" });
     }
 
-}
+    const watchlater = new Watchlater({ videoid, viewer });
+    await watchlater.save();
+    res.status(200).json(watchlater);
+  } catch (error) {
+    res.status(500).json({ message: "Error adding to watch later", error: error.message });
+  }
+};
+
+export const getallwatchlatercontroller = async (req, res) => {
+  try {
+    const watchlaters = await Watchlater.find();
+    res.status(200).json(watchlaters);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching watch later videos", error: error.message });
+  }
+};
+
+export const deletewatchlater = async (req, res) => {
+  try {
+    const { videoid, viewer } = req.params;
+    await Watchlater.findOneAndDelete({ videoid, viewer });
+    res.status(200).json({ message: "Removed from watch later" });
+  } catch (error) {
+    res.status(500).json({ message: "Error removing from watch later", error: error.message });
+  }
+};

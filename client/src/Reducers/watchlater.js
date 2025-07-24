@@ -1,7 +1,7 @@
 const watchlaterreducer=(state={data: []},action)=>{
     switch (action.type) {
         case "POST_WATCHLATER":
-            return{...state,data:action?.data}
+            return { ...state, data: [...state.data, action?.data] }
         case "FETCH_ALL_WATCHLATER":
             return{...state,data:action?.payload}
         default:

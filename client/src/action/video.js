@@ -1,47 +1,65 @@
-import * as api from "../Api";
+import {
+  GET_ALL_VIDEOS,
+  GET_SINGLE_VIDEO,
+  LIKE_VIDEO,
+  VIEW_VIDEO,
+  UPLOAD_VIDEO,
+} from '../action/types'; // Action types
 
-// ✅ Upload video
-export const uploadvideo = (videodata) => async (dispatch) => {
-  try {
-    const { filedata, fileoption } = videodata;
-    const { data } = await api.uploadvideo(filedata, fileoption);
-    dispatch({ type: 'POST_VIDEO', data });
-    dispatch(getallvideo());
-  } catch (error) {
-    alert(error.response.data.message);
-  }
-};
+// ✅ Import API functions
+import {
+  getvideos,
+  getvideobyid,
+  uploadvideo as uploadvideoAPI,
+  likevideo as likevideoAPI,
+  viewvideo as viewvideoAPI,
+} from "../Api"; // Make sure names match exactly
 
-// ✅ Fetch all videos
+// ✅ Get All Videos
 export const getallvideo = () => async (dispatch) => {
   try {
-    const { data } = await api.getvideos();
-    dispatch({ type: 'FETCH_ALL_VIDEOS', payload: data });
+    const { data } = await getvideos();
+    dispatch({ type: GET_ALL_VIDEOS, payload: data });
   } catch (error) {
-    console.log(error);
+    console.error("Get All Videos Error:", error.message);
   }
 };
 
-// ✅ Like video
-export const likevideo = (likedata) => async (dispatch) => {
+// ✅ Get Single Video by ID
+export const getSingleVideo = (id) => async (dispatch) => {
   try {
-    const { id, Like } = likedata;
-    const { data } = await api.likevideo(id, Like);
-    dispatch({ type: "POST_LIKE", payload: data });
-    dispatch(getallvideo());
+    const { data } = await getvideobyid(id);
+    dispatch({ type: GET_SINGLE_VIDEO, payload: data });
   } catch (error) {
-    console.log(error);
+    console.error("Get Single Video Error:", error.message);
   }
 };
 
-// ✅ View video
-export const viewvideo = (viewdata) => async (dispatch) => {
+// ✅ Upload a Video
+export const uploadvideoAction = (formData) => async (dispatch) => {
   try {
-    const { id } = viewdata;
-    const { data } = await api.viewsvideo(id);
-    dispatch({ type: "POST_VIEWS", data });
-    dispatch(getallvideo());
+    const { data } = await uploadvideoAPI(formData);
+    dispatch({ type: UPLOAD_VIDEO, payload: data });
   } catch (error) {
-    console.log(error);
+    console.error("Upload Video Error:", error.message);
+  }
+};
+
+// ✅ Like a Video
+export const likevideoAction = (id) => async (dispatch) => {
+  try {
+    const { data } = await likevideoAPI(id);
+    dispatch({ type: LIKE_VIDEO, payload: data });
+  } catch (error) {
+    console.error("Like Video Error:", error.message);
+  }
+};
+
+// ✅ View a Video (increment view count)
+export const viewvideoAction = (id) => async (dispatch) => {
+  try {
+    await viewvideoAPI(id); // ✅ fixed name here
+  } catch (error) {
+    console.error("View update failed:", error);
   }
 };

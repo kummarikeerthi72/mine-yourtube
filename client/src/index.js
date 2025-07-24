@@ -6,9 +6,13 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import { applyMiddleware, compose } from 'redux';
 import { legacy_createStore as createStore } from 'redux';
-import { thunk } from 'redux-thunk'; // ✅ Correct import for latest version
+import { thunk } from 'redux-thunk';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Reducers from './Reducers';
+
+
+// ✅ Console log to check client ID is loaded
+console.log("Google Client ID:", process.env.REACT_APP_GOOGLE_CLIENT_ID);
 
 const store = createStore(Reducers, compose(applyMiddleware(thunk)));
 

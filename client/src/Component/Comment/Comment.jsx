@@ -1,80 +1,74 @@
-import React, { useState } from 'react';
-import './Comment.css';
-import Displaycommment from './Displaycommment';
-import { useSelector, useDispatch } from 'react-redux';
-import { postcomment } from '../../action/comment';
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { postcomment, getallcomment } from "../../action/comment";
+import "./Comment.css";
 
-const Comment = ({ videoid }) => {
+const Comment = ({ videoId }) => {
   const dispatch = useDispatch();
-  const [commenttext, setcommentext] = useState('');
+  const [commentbody, setCommentBody] = useState("");
 
-  const currentuser = useSelector((state) => state.currentuserreducer);
-  const commentlist = useSelector((state) => state.commentreducer);
+  const { comment } = useSelector((state) => state.comment || { comment: [] });
+  const user = JSON.parse(localStorage.getItem("profile"));
+  const username = user?.result?.name || "User";
 
-  const handleonsubmit = (e) => {
-    e.preventDefault();
-    if (!currentuser) {
-      alert('Please login to comment.');
-      return;
-    }
+  const videoComments = comment?.filter((c) => c.videoId === videoId);
 
-    if (!commenttext.trim()) {
-      alert('Please type your comment!');
-      return;
-    }
+  const handlePost = () => {
+    if (!commentbody.trim()) return;
 
-    dispatch(
-      postcomment({
-        videoid: videoid,
-        userid: currentuser?.result._id,
-        commentbody: commenttext,
-        usercommented: currentuser.result.name,
-      })
-    );
-    setcommentext('');
+    const commentData = {
+      commentbody,
+      username,
+      videoId,
+    };
+
+    dispatch(postcomment(commentData));
+    setCommentBody("");
   };
 
-  // ✅ Full fallback handling
-
-
-const filteredComments = Array.isArray(commentlist?.data)
-  ? commentlist.data.filter((q) => q?.videoid === videoid)
-  : [];
-
+  useEffect(() => {
+    dispatch(getallcomment());
+  }, [dispatch]);
 
   return (
-    <>
-      <form className="comments_sub_form_comments" onSubmit={handleonsubmit}>
-        <input
-          type="text"
-          onChange={(e) => setcommentext(e.target.value)}
-          placeholder="Add comment..."
-          value={commenttext}
-          className="comment_ibox"
-        />
-        <input type="submit" value="Add" className="comment_add_btn_comments" />
-      </form>
+    <div className="comment-section">
+      <h3>{videoComments?.length || 0} Comments</h3>
 
-      <div className="display_comment_container">
-        {filteredComments.length > 0 ? (
-          filteredComments
-            .slice()
-            .reverse()
-            .map((m) => (
-              <Displaycommment
-                key={m._id}
-                cid={m._id}
-                userid={m.userid}
-                commentbody={m.commentbody}
-                commenton={m.commenton}
-                usercommented={m.usercommented}
-              />
-            ))
-        ) : (
-          <p style={{ padding: '10px' }}>No comments yet.</p>
-        )}
+      {/* --- Comment Input Section --- */}
+      <div className="comment-input-row">
+        <img
+          src="https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png"
+          alt="profile"
+          className="profile-img"
+        />
+        <input
+          className="comment-input"
+          placeholder="Add a comment..."
+          value={commentbody}
+          onChange={(e) => setCommentBody(e.target.value)}
+        />
+        <button className="post-btn" onClick={handlePost}>
+          Post
+        </button>
       </div>
-    </>
+
+      {/* --- Comment List --- */}
+      <div className="all-comments">
+        {videoComments?.map((c, i) => (
+          <div key={i} className="single-comment">
+            <img
+              src="https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png"
+              alt="profile"
+              className="profile-img"
+            />
+            <div className="comment-content">
+              <span className="comment-username">{c.username || "User"}</span>
+              <p className="comment-text">{c.commentbody}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 

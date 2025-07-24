@@ -1,12 +1,8 @@
-import express from "express"
+import express from "express";
+import auth from "../middleware/auth.js";
+import { postcomment } from "../Controllers/Comment.js"; // Ensure file name matches case
 
-import { postcomment,getcomment,deletecomment,editcomment } from "../Controllers/Comment.js"
-import auth from "../middleware/auth.js"
-const router=express.Router()
+const router = express.Router();
+router.post("/post", auth, postcomment);
 
-router.post("/post",auth,postcomment)
-router.get('/get',getcomment)
-router.delete('/delete/:id',auth,deletecomment)
-router.patch('/edit/:id',auth,editcomment)
-
-export default router
+export default router;
