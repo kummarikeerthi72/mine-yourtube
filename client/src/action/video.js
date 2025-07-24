@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import {
   GET_ALL_VIDEOS,
   GET_SINGLE_VIDEO,
