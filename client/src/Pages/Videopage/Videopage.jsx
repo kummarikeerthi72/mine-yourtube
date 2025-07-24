@@ -39,7 +39,7 @@ const Videopage = () => {
 
   const getVideoUrl = (filepath) => {
     if (!filepath) return '';
-    return `http://localhost:5000/${filepath.startsWith('/') ? filepath.slice(1) : filepath}`;
+    return `https://mine-yourtube.onrender.com:///${filepath.startsWith('/') ? filepath.slice(1) : filepath}`;
   };
 
   if (!vv) return <p>Loading video or video not found...</p>;

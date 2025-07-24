@@ -8,22 +8,28 @@ const CreateGroup = () => {
 
   const handleCreate = async (e) => {
     e.preventDefault();
+
+    const groupData = { name, description };
+
     try {
       const token = localStorage.getItem("token");
+
       const res = await axios.post(
-        "http://localhost:5000/api/group/create",
-        { name, description },
+        "https://mine-yourtube.onrender.com/api/group/create",
+        groupData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      setMessage("Group created successfully!");
+
+      setMessage("✅ Group created successfully!");
       setName("");
       setDescription("");
     } catch (error) {
-      setMessage("Error creating group");
+      console.error(error);
+      setMessage("❌ Error creating group");
     }
   };
 
@@ -51,7 +57,7 @@ const CreateGroup = () => {
         >
           Create
         </button>
-        {message && <p className="text-sm text-green-600">{message}</p>}
+        {message && <p className="text-sm mt-2">{message}</p>}
       </form>
     </div>
   );

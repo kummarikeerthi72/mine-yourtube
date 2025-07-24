@@ -7,13 +7,17 @@ const Showvideo = ({ vid }) => {
   const title = vid?.videotitle || vid?.title || 'Untitled Video';
   const channelName = vid?.channelname || 'Keerthi';
 
+  // Correct video URL using deployed backend
+  const videoURL = `https://mine-yourtube.onrender.com/${vid.filepath?.startsWith('/') ? vid.filepath.slice(1) : vid.filepath}`;
+
   return (
     <>
       <Link to={`/videopage/${vid._id}`}>
         <video
-          src={`http://localhost:5000/${vid.filepath}`}
+          src={videoURL}
           className='video_ShowVideo'
           preload="metadata"
+          controls
         />
       </Link>
 

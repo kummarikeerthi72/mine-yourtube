@@ -1,8 +1,6 @@
 import axios from 'axios';
-import * as api from '../Api'; // ✅ This line imports your axios calls
 
-
-const API = axios.create({ baseURL: 'http://localhost:5000/api' });
+const API = axios.create({ baseURL: 'https://mine-yourtube.onrender.com/api' });
 
 // Automatically attach token
 API.interceptors.request.use((req) => {
@@ -23,8 +21,6 @@ export const uploadvideo = (filedata, fileoption) => API.post('/video/uploadvide
 export const getvideos = () => API.get('/video/all');
 export const likevideo = (id, action) => API.patch(`/video/like/${id}`, { action });
 export const viewvideo = (id) => API.patch(`/video/views/${id}`);
-
-
 export const getvideobyid = (id) => API.get(`/video/${id}`);
 
 // ✅ Comment
