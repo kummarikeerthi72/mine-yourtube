@@ -20,7 +20,8 @@ import {
 // ✅ Get All Videos
 export const getallvideo = () => async (dispatch) => {
   try {
-    const res = await axios.get('https://mine-yourtube.onrender.com/api/video/get');
+    const res = await axios.get('https://mine-yourtube.onrender.com/api/video/all'); // ✅ correct
+
     dispatch({ type: GET_ALL_VIDEOS, payload: res.data }); // ✅ Corrected
   } catch (error) {
     console.error('Error fetching videos:', error);

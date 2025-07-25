@@ -23,23 +23,22 @@ const Videopage = () => {
   }, [vids, vid]);
 
   useEffect(() => {
-  if (vid) {
-    dispatch(viewvideoAction(vid));
-    if (currentuser?.result?._id) {
-      dispatch(
-        addtohistory({
-          videoid: vid,
-          userid: currentuser.result._id,
-        })
-      );
+    if (vid) {
+      dispatch(viewvideoAction(vid));
+      if (currentuser?.result?._id) {
+        dispatch(
+          addtohistory({
+            videoid: vid,
+            userid: currentuser.result._id,
+          })
+        );
+      }
     }
-  }
-}, [dispatch, vid, location.pathname, currentuser?.result?._id]);
- // 🔁 triggered even when same video link is revisited
+  }, [dispatch, vid, location.pathname, currentuser?.result?._id]);
 
   const getVideoUrl = (filepath) => {
     if (!filepath) return '';
-    return `https://mine-yourtube.onrender.com:///${filepath.startsWith('/') ? filepath.slice(1) : filepath}`;
+    return `https://mine-yourtube.onrender.com${filepath.startsWith('/') ? filepath : '/' + filepath}`;
   };
 
   if (!vv) return <p>Loading video or video not found...</p>;
@@ -49,18 +48,18 @@ const Videopage = () => {
       <div className="container2_videoPage">
         <div className="video_display_screen_videoPage">
           <video
-  src={getVideoUrl(vv.filepath)}
-  className="video_ShowVideo_videoPage"
-  controls
-  onPlay={() => dispatch(viewvideoAction(vid))}
-/>
+            src={getVideoUrl(vv.filepath)}
+            className="video_ShowVideo_videoPage"
+            controls
+            onPlay={() => dispatch(viewvideoAction(vid))}
+          />
 
           <div className="video_details_videoPage">
             <div className="video_btns_title_VideoPage_cont">
               <p className="video_title_VideoPage">{vv.title || 'Untitled Video'}</p>
               <div className="views_date_btns_VideoPage">
                 <div className="views_videoPage">
-                  {vv.views || 0} views <div className="dot"></div> {moment(vv.createdat).fromNow()}
+                  {vv.views || 0} views <div className="dot"></div> {moment(vv.createdAt || vv.updatedAt).fromNow()}
                 </div>
                 <Likewatchlatersavebtns vv={vv} vid={vid} />
               </div>
