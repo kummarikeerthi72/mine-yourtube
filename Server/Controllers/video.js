@@ -39,21 +39,23 @@ export const uploadvideo = async (req, res) => {
 };
 
 // ✅ Get all videos
+
 export const getallvideo = async (req, res) => {
   try {
     const videos = await Videomodel.find().sort({ createdAt: -1 });
 
-    // Filter out videos whose files don't exist in /uploads
-    const filteredVideos = videos.filter(video => {
-      const filePath = path.join('uploads', video.filename);
-      return fs.existsSync(filePath); // Only include if file exists
-    });
+    // ❌ Remove this check, since Render file system won't persist
+    // const filteredVideos = videos.filter(video => {
+    //   const filePath = path.join('uploads', video.filename);
+    //   return fs.existsSync(filePath);
+    // });
 
-    res.status(200).json(filteredVideos);
+    res.status(200).json(videos);  // send all videos
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 // ✅ Get single video WITHOUT increasing views
 export const getvideobyid = async (req, res) => {
