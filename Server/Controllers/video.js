@@ -2,6 +2,8 @@
 import Video from "../Models/videofile.js";
 import fs from 'fs';
 import path from 'path';
+import Videomodel from "../Models/videofile.js";
+
 
 // ✅ Upload video
 export const uploadvideo = async (req, res) => {
