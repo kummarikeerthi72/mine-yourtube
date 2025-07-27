@@ -7,42 +7,41 @@ const Showvideo = ({ vid }) => {
   const title = vid?.videotitle || vid?.title || 'Untitled Video';
   const channelName = vid?.channelname || 'Keerthi';
 
-  // Correct video URL using deployed backend
-  const videoURL = `https://mine-yourtube.onrender.com/uploads/${vid.filepath?.startsWith('/') ? vid.filepath.slice(1) : vid.filepath}`;
-
+  const videoPath = vid?.videoPath || '';
+  const videoURL = videoPath.startsWith('uploads/')
+    ? `https://mine-yourtube.onrender.com/${videoPath}`
+    : '';
 
   return (
-    <>
-      <Link to={`/videopage/${vid._id}`}>
+    <Link to={`/videopage/${vid._id}`} className="showvideo-card">
+      <div className="thumbnail-container">
         <video
-  src={videoURL}
-  className='video_ShowVideo'
-  preload="metadata"
-  controls
-  type="video/mp4"
-  crossOrigin="anonymous"
-/>
-
-      </Link>
-
-      <div className="video_description">
-        <div className="Chanel_logo_App">
-          <div className="fstChar_logo_App">
-            {channelName.charAt(0).toUpperCase()}
-          </div>
-        </div>
-
-        <div className="video_details">
-          <p className="title_vid_ShowVideo">
-            {title.trim()}
+          src={videoURL}
+          className="video-thumb"
+          muted
+          playsInline
+          preload="metadata"
+          onMouseOver={(e) => e.target.play()}
+          onMouseOut={(e) => e.target.pause()}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            backgroundColor: 'black',
+          }}
+        />
+      </div>
+      <div className="video-info">
+        <div className="channel-logo">{channelName.charAt(0).toUpperCase()}</div>
+        <div className="video-text">
+          <p className="video-title">{title}</p>
+          <p className="video-channel">{channelName}</p>
+          <p className="video-stats">
+            {vid?.views || 0} views • {moment(vid?.createdAt || vid?.createdat).fromNow()}
           </p>
-          <pre className="vid_views_UploadTime">{channelName}</pre>
-          <pre className="vid_views_UploadTime">
-            {vid?.views || 0} views <div className="dot"></div> {moment(vid?.createdat).fromNow()}
-          </pre>
         </div>
       </div>
-    </>
+    </Link>
   );
 };
 

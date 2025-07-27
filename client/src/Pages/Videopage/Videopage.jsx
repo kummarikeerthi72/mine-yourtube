@@ -36,9 +36,12 @@ const Videopage = () => {
     }
   }, [dispatch, vid, location.pathname, currentuser?.result?._id]);
 
-  const getVideoUrl = (filepath) => {
-    if (!filepath) return '';
-    return `https://mine-yourtube.onrender.com${filepath.startsWith('/') ? filepath : '/' + filepath}`;
+  // ✅ Safely build video URL
+  const getVideoUrl = (videoPath) => {
+    if (!videoPath) return '';
+    return videoPath.startsWith('uploads/')
+      ? `https://mine-yourtube.onrender.com/${videoPath}`
+      : '';
   };
 
   if (!vv) return <p>Loading video or video not found...</p>;
@@ -47,12 +50,16 @@ const Videopage = () => {
     <div className="container_videoPage">
       <div className="container2_videoPage">
         <div className="video_display_screen_videoPage">
-          <video
-            src={getVideoUrl(vv.filepath)}
-            className="video_ShowVideo_videoPage"
-            controls
-            onPlay={() => dispatch(viewvideoAction(vid))}
-          />
+          {vv.videoPath ? (
+            <video
+              src={getVideoUrl(vv.videoPath)}
+              className="video_ShowVideo_videoPage"
+              controls
+              onPlay={() => dispatch(viewvideoAction(vid))}
+            />
+          ) : (
+            <p style={{ color: 'red' }}>Video not available</p>
+          )}
 
           <div className="video_details_videoPage">
             <div className="video_btns_title_VideoPage_cont">

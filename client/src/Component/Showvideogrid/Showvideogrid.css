@@ -1,5 +1,7 @@
-.Container_ShowVideoGrid{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+.grid-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 20px;
+  padding: 20px;
 }
