@@ -17,3 +17,10 @@
 .btn_nav_home:hover{
     background-color: rgb(128,128,128);
 }
+/* MainPage.css or parent wrapper */
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  padding: 20px;
+}

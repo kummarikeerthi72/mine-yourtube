@@ -20,3 +20,12 @@ code {
   background-color: grey;
   border-radius: 5rem;
 }
+video::-webkit-media-controls {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+video::-webkit-media-controls-enclosure {
+  display: none !important;
+  opacity: 0 !important;
+}
